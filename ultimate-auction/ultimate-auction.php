@@ -6,10 +6,10 @@
 	Description: Awesome plugin to host auctions on your WordPress site and sell anything you want.
 	Author: Nitesh Singh
 	Author URI: https://auctionplugin.net
-	Version: 4.2.8
+	Version: 4.2.9
 	Text Domain: wdm-ultimate-auction
 	License: GPLv2
-	Copyright 2024 Nitesh Singh
+	Copyright 2025 Nitesh Singh
 */
 
 if ( ! defined( 'ABSPATH' ) ) {

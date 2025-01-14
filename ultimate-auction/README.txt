@@ -3,8 +3,8 @@ Contributors: nitesh_singh
 Donate link: http://auctionplugin.net/
 Tags: auction, auction plugin, wordpress auction, ebay auction, bidding
 Requires at least: 4.6
-Tested up to: 6.6.1
-Stable tag: 4.2.8
+Tested up to: 6.7.1
+Stable tag: 4.2.9
 License: GPLv2 or later
 
 Ultimate Wordpress Auction plugin is the best plugin to host auctions on your wordpress site.
@@ -350,6 +350,12 @@ For example:
 == Frequently Asked Questions ==
 
 == Changelog ==
+
+= 4.2.9 =
+
+1. Improvement:
+
+	Verified plugin compatibility with the latest WordPress version for the Ultimate WordPress Auction Plugin.
 
 
 = 4.2.8 =
