@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $page_num = get_option( 'wdm_auc_num_per_page' );
 $page_num = ( ! empty( $page_num ) && $page_num > 0 ) ? $page_num : 20;
 
-function auction_pagination( $pages = '', $range = 2, $paged ) {
+function auction_pagination_ex( $pages = '', $range = 2, $paged ) {
 	$showitems = ( $range * 2 ) + 1;
 
 	if ( empty( $paged ) ) {
@@ -284,7 +284,7 @@ echo wp_kses_post( $show_content );
 			echo '<input type="hidden" id="wdm_ua_auc_avail" value="' . esc_html( $count_pages ) . '" />';
 
 			$c = ceil( $count_pages / $page_num );
-			auction_pagination( $c, 1, $paged );
+			auction_pagination_ex( $c, 1, $paged );
 		}
 
 		?>

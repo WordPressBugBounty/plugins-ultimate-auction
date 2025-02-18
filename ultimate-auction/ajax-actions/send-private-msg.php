@@ -32,12 +32,12 @@ jQuery(document).ready(function($) {
                 p_url: "<?php echo esc_url(get_permalink()); ?>",
                 p_auc_id: "<?php echo intval($wdm_auction->ID); ?>",
                 p_char: "<?php echo esc_html($set_char); ?>",
-                uwaajax_nonce: '<?php echo esc_attr(wp_create_nonce('uwaajax_nonce')); ?>'
+                uwaajax_nonce: "<?php echo wp_create_nonce('uwaajax_nonce'); ?>"
             };
             
             $.post(ajaxurl, data, function(response) {
                 if (response.success) {
-                    alert("<?php esc_html_e('Message sent successfully.', 'wdm-ultimate-auction'); ?>");
+                    alert(response.data);  // This will show "Message sent successfully."
                     $("#wdm-prv-bidder-name").val("");
                     $("#wdm-prv-bidder-email").val("");
                     $("#wdm-prv-bidder-msg").val("");

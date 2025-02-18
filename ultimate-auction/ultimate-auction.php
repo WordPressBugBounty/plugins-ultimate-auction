@@ -6,7 +6,7 @@
 	Description: Awesome plugin to host auctions on your WordPress site and sell anything you want.
 	Author: Nitesh Singh
 	Author URI: https://auctionplugin.net
-	Version: 4.2.9
+	Version: 4.3.0
 	Text Domain: wdm-ultimate-auction
 	License: GPLv2
 	Copyright 2025 Nitesh Singh
@@ -208,71 +208,68 @@ add_action( 'wp_ajax_nopriv_resend_auction_email', 'resend_auction_email_callbac
 
 // delete auction Ajax callback - 'Delete' link on 'Manage Auctions' page
 function delete_auction_callback() {
-	global $wpdb;
+    global $wpdb;
 
-	if ( wp_verify_nonce( $_POST['uwaajax_nonce'], 'uwaajax_nonce' ) ) {
+    // Verify nonce for security
+    if ( !isset($_POST['uwaajax_nonce']) || !wp_verify_nonce( $_POST['uwaajax_nonce'], 'uwaajax_nonce' ) ) {
+        wp_send_json_error( ['message' => 'Nonce verification failed'], 403 );
+        die();
+    }
 
-		/*
-		$delete_auction_array = $wpdb->get_col($wpdb->prepare("SELECT meta_value from $wpdb->postmeta WHERE meta_key LIKE %s AND
-			post_id = %d", '%wdm-image-%', $delete_post_id));*/
+    // Ensure the auction ID is passed and sanitized
+    if ( !isset( $_POST['del_id'] ) || empty( $_POST['del_id'] ) ) {
+        wp_send_json_error( ['message' => 'Missing auction ID'], 400 );
+        die();
+    }
 
-		$table_postmeta       = $wpdb->postmeta;
-		$delete_post_id       = $_POST['del_id'];
-		$pre_qry              = $GLOBALS['wpdb']->get_col( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->prefix}postmeta WHERE meta_key LIKE %s AND post_id = %d", '%wdm-image-%', $delete_post_id ));
-		$delete_auction_array = $pre_qry;
+    $delete_post_id = absint( $_POST['del_id'] ); // Sanitize post ID
+    $force_delete   = isset( $_POST['force_del'] ) && $_POST['force_del'] === 'yes' ? true : false;
 
-		if ( $_POST['force_del'] === 'yes' ) {
-			$force = true;
-		} else {
-			$force = false;
-		}
+    // Get the auction post
+    $post = get_post( $delete_post_id );
+    if ( !$post || $post->post_type !== 'ultimate-auction' ) {
+        wp_send_json_error( ['message' => 'Invalid auction post ID'], 404 );
+        die();
+    }
 
-		if ( current_user_can( 'delete_posts' ) ) {
-			$del_auc = wp_delete_post( esc_attr( $_POST['del_id'] ), false );
-			/*$wpdb->query( $wpdb->prepare("DELETE FROM ".$wpdb->prefix."wdm_bidders WHERE auction_id = %d", esc_attr($_POST["del_id"])));*/
+    // Check if the current user is an admin or the auction post owner
+    if ( !current_user_can( 'delete_posts' ) || ( $post->post_author != get_current_user_id() && !current_user_can( 'administrator' ) ) ) {
+        wp_send_json_error( ['message' => 'Permission denied'], 403 );
+        die();
+    }
 
-			$table     = $wpdb->prefix . 'wdm_bidders';
-			$delid     = $_POST['del_id'];
-			$n_pre_qry = $GLOBALS['wpdb']->query($wpdb->prepare(
-				"DELETE FROM {$wpdb->prefix}wdm_bidders WHERE 
-				auction_id = %d",
-				$delid
-			));
-			//$wpdb->query( $n_pre_qry );
-		}
+    // Proceed with deletion if the user is authorized
+    $del_auc = wp_delete_post( $delete_post_id, $force_delete );
 
-		if ( $del_auc ) {
-			foreach ( $delete_auction_array as $delete_image_url ) {
-				if ( ! empty( $delete_image_url ) && $delete_image_url !== null ) {
-					/*
-					$auction_url_post_id = $wpdb->get_var("SELECT ID from $wpdb->posts WHERE guid = '$delete_image_url' AND
-						post_type = ");*/
+    // If the auction post was deleted, proceed with cleanup
+    if ( $del_auc ) {
+        // Delete associated bidders
+        $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}wdm_bidders WHERE auction_id = %d", $delete_post_id ) );
 
-					$table_posts = $wpdb->posts;
-					$n2_pre_qry  = $GLOBALS['wpdb']->get_var($wpdb->prepare(
-						"SELECT ID FROM {$wpdb->prefix}posts WHERE 
-						guid = %s AND post_type = %s",
-						$delete_image_url,
-						'attachment'
-					));
+        // Delete associated attachments (images)
+        $image_urls = $wpdb->get_col( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->prefix}postmeta WHERE meta_key LIKE %s AND post_id = %d", '%wdm-image-%', $delete_post_id ) );
 
-					$auction_url_post_id = $n2_pre_qry;
-					wp_delete_post( $auction_url_post_id, true ); // also delete images attached
-				}
-			}
+        foreach ( $image_urls as $image_url ) {
+            if ( !empty( $image_url ) ) {
+                $attachment_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->prefix}posts WHERE guid = %s AND post_type = 'attachment'", $image_url ) );
+                if ( $attachment_id ) {
+                    wp_delete_post( $attachment_id, true ); // Delete the attachment
+                }
+            }
+        }
 
-			/* translators: %s is auction title */
-			printf( esc_html( __( 'Auction %s and its attachments are deleted successfully.', 'wdm-ultimate-auction' ) ), esc_attr( $_POST['auc_title'] ) );
-		} else {
-			esc_html_e( 'Sorry, this auction cannot be deleted.', 'wdm-ultimate-auction' );
-		}
-	} /* end of if */
+        // Return success message
+        wp_send_json_success( ['message' => sprintf( esc_html__( 'Auction %s and its attachments have been deleted successfully.', 'wdm-ultimate-auction' ), esc_attr( $post->post_title ) ) ] );
+    } else {
+        wp_send_json_error( ['message' => 'Failed to delete auction'], 500 );
+    }
 
-	die();
+    die();
 }
 
 add_action( 'wp_ajax_delete_auction', 'delete_auction_callback' );
 add_action( 'wp_ajax_nopriv_delete_auction', 'delete_auction_callback' );
+
 
 // multiple delete auction Ajax callback
 function multi_delete_auction_callback() {
@@ -718,43 +715,41 @@ add_action( 'wp_ajax_nopriv_bid_notification', 'bid_notification_callback' );
 
 // private message Ajax callback - Single Auction page
 function private_message_callback() {
+    if ( !wp_verify_nonce( $_POST['uwaajax_nonce'], 'uwaajax_nonce' ) ) {
+        wp_send_json_error('Nonce verification failed');
+        die();
+    }
 
-	if ( wp_verify_nonce( $_POST['uwaajax_nonce'], 'uwaajax_nonce' ) ) {
+    $char = esc_attr( $_POST['p_char'] );
+    $auc_url = esc_url( $_POST['p_url'] ) . $char . 'ult_auc_id=' . esc_attr( $_POST['p_auc_id'] );
 
-		$char = esc_attr( $_POST['p_char'] );
+    $adm_email = get_option( 'wdm_auction_email' );
+    if ( empty( $adm_email ) ) {
+        $adm_email = get_option( 'admin_email' );
+    }
 
-		$auc_url = esc_url( $_POST['p_url'] ) . $char . 'ult_auc_id=' . esc_attr( $_POST['p_auc_id'] );
+    $p_sub = '[' . get_bloginfo( 'name' ) . '] ' . __( 'You have a private message from a site visitor', 'wdm-ultimate-auction' );
 
-		$adm_email = get_option( 'wdm_auction_email' );
-		if ( empty( $adm_email ) ) {
-			$adm_email = get_option( 'admin_email' );
-		}
+    $msg  = '';
+    $msg  = __( 'Name', 'wdm-ultimate-auction' ) . ': ' . esc_attr( $_POST['p_name'] ) . '<br /><br />';
+    $msg .= __( 'Email', 'wdm-ultimate-auction' ) . ': ' . esc_attr( $_POST['p_email'] ) . '<br /><br />';
+    $msg .= __( 'Message', 'wdm-ultimate-auction' ) . ': <br />' . esc_attr( $_POST['p_msg'] ) . '<br /><br />';
+    $msg .= __( 'Product URL', 'wdm-ultimate-auction' ) . ": <a href='" . $auc_url . "'>" . $auc_url . '</a><br />';
 
-		$p_sub = '[' . get_bloginfo( 'name' ) . '] ' . __( 'You have a private message from a site visitor', 'wdm-ultimate-auction' );
+    $hdr = '';
+    $hdr .= 'Reply-To: <' . esc_attr( $_POST['p_email'] ) . "> \r\n";
+    $hdr .= "MIME-Version: 1.0\r\n";
+    $hdr .= 'Content-type:text/html;charset=UTF-8' . "\r\n";
 
-		$msg  = '';
-		$msg  = __( 'Name', 'wdm-ultimate-auction' ) . ': ' . esc_attr( $_POST['p_name'] ) . '<br /><br />';
-		$msg .= __( 'Email', 'wdm-ultimate-auction' ) . ': ' . esc_attr( $_POST['p_email'] ) . '<br /><br />';
-		$msg .= __( 'Message', 'wdm-ultimate-auction' ) . ': <br />' . esc_attr( $_POST['p_msg'] ) . '<br /><br />';
-		$msg .= __( 'Product URL', 'wdm-ultimate-auction' ) . ": <a href='" . $auc_url . "'>" . $auc_url . '</a><br />';
+    $sent = wp_mail( $adm_email, $p_sub, $msg, $hdr, '' );
 
-		$hdr = '';
-		// $hdr  = "From: ". get_bloginfo('name') ." <". $adm_email ."> \r\n";
-		$hdr .= 'Reply-To: <' . esc_attr( $_POST['p_email'] ) . "> \r\n";
-		$hdr .= "MIME-Version: 1.0\r\n";
-		$hdr .= 'Content-type:text/html;charset=UTF-8' . "\r\n";
+    if ( $sent ) {
+        wp_send_json_success(__('Message sent successfully.', 'wdm-ultimate-auction'));
+    } else {
+        wp_send_json_error(__('Sorry, the email could not be sent.', 'wdm-ultimate-auction'));
+    }
 
-		$sent = wp_mail( $adm_email, $p_sub, $msg, $hdr, '' );
-
-		if ( $sent ) {
-			esc_html_e( 'Email sent successfully.', 'wdm-ultimate-auction' );
-		} else {
-			esc_html_e( 'Sorry, the email could not sent.', 'wdm-ultimate-auction' );
-		}
-
-	} /* end of if - nonce */
-
-	die();
+    die();
 }
 
 add_action( 'wp_ajax_private_message', 'private_message_callback' );

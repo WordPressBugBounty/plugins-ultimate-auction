@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $page_num = get_option( 'wdm_auc_num_per_page' );
 $page_num = ( ! empty( $page_num ) && $page_num > 0 ) ? $page_num : 20;
 
-function auction_pagination( $pages = '', $range = 2, string $paged = null ) {
+function auction_pagination( $pages = '', $range = 2, $paged = null ) {
 	$showitems = ( $range * 2 ) + 1;
 
 	if ( empty( $paged ) ) {
@@ -21,14 +21,12 @@ function auction_pagination( $pages = '', $range = 2, string $paged = null ) {
 			$pages = 1;
 		}
 	}
+
 	if ( 1 != $pages ) {
 		echo "<div class='pagination'>";
 
 		/* translators: %1$s is page number, %2$s is total pages  */
-		printf( '<span>' . esc_html( __( 'Page %1$s of %2$s', 'wdm-ultimate-auction' ) ) . '</span>',
-			esc_html( $paged ),
-			esc_html( $pages )
-		);
+		printf( '<span>' . esc_html( __( 'Page %1$s of %2$s', 'wdm-ultimate-auction' ) ) . '</span>', esc_html( $paged ), esc_html( $pages ) );
 		if ( $paged > 2 && $paged > $range + 1 && $showitems < $pages ) {
 			echo "<a href='" . esc_url( get_pagenum_link( 1 ) ) . "'>&laquo;</a>";
 		}
@@ -38,9 +36,10 @@ function auction_pagination( $pages = '', $range = 2, string $paged = null ) {
 
 		for ( $i = 1; $i <= $pages; $i++ ) {
 			if ( 1 != $pages && ( ! ( $i >= $paged + $range + 1 || $i <= $paged - $range - 1 ) || $pages <= $showitems ) ) {
-				echo ( $paged == $i ) ? "<span class='current'>" . intval( $i ) . '</span>' : "<a href='" . esc_url( get_pagenum_link( $i ) ) . "' class='inactive' >" . intval( $i ) . '</a>';
+				echo ( $paged == $i ) ? "<span class='current'>" . esc_html( $i ) . '</span>' : "<a href='" . esc_url( get_pagenum_link( $i ) ) . "' class='inactive' >" . esc_html( $i ) . '</a>';
 			}
 		}
+
 		if ( $paged < $pages && $showitems < $pages ) {
 			echo "<a href='" . esc_url( get_pagenum_link( $paged + 1 ) ) . "'>&rsaquo;</a>";
 		}
@@ -50,6 +49,7 @@ function auction_pagination( $pages = '', $range = 2, string $paged = null ) {
 		echo "</div>\n";
 	}
 }
+
 
 $wdm_auction_array = array();
 if ( get_query_var( 'paged' ) ) {
