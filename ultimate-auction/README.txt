@@ -3,8 +3,8 @@ Contributors: nitesh_singh
 Donate link: http://auctionplugin.net/
 Tags: auction, auction plugin, wordpress auction, ebay auction, bidding
 Requires at least: 4.6
-Tested up to: 6.7.2
-Stable tag: 4.3.0
+Tested up to: 6.8
+Stable tag: 4.3.1
 License: GPLv2 or later
 
 Ultimate Wordpress Auction plugin is the best plugin to host auctions on your wordpress site.
@@ -351,6 +351,17 @@ For example:
 
 == Changelog ==
 
+= 4.3.1 =
+
+1. Fix:
+
+	Resolved an issue where the thumbnail image was not displaying in the auction listing table, and the image gallery was not working on the auction detail page.
+
+2. Enhancement:
+	
+	Added missing translation strings to ensure better compatibility with Loco Translate.
+
+
 = 4.3.0 =
 
 1. Fix:
@@ -360,6 +371,7 @@ For example:
 	Ensured SQL queries use wpdb::prepare() to prevent SQL injection vulnerabilities.
 	Fixed an issue where the Live Auction and Expired Auction shortcodes were not working together on the same page.
 	Resolved a bug where the alert message was not displaying correctly after sending a private message.
+
 
 = 4.2.9 =
 

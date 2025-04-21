@@ -92,8 +92,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 							} elseif ( empty( $auc_thumb ) ) {
 								$auc_thumb = plugins_url( 'img/no-pic.jpg', __FILE__ );
 							} else {
-
-								$auc_thumb = plugins_url( 'img/no-pic.jpg', __FILE__ );
+								$imgid     = attachment_url_to_postid( $auc_thumb );
+								//$Image_URL = wp_get_attachment_image_url( $imgid, 'thumbnail' );
+								$auc_thumb = $auc_thumb;
 
 							}
 

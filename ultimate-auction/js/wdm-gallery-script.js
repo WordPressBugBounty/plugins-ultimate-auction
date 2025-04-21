@@ -81,10 +81,11 @@ document.addEventListener(
 				currentSlideIndex = index;
 				// alert(currentSlideIndex);
 				const slide = slides[index];
-
+				console.log(slide);
 				if (slide.type === 'image') {
 
 					currentSlideContainer.innerHTML = `<img src="${slide.src}" alt="Image">`;
+					
 				} else if (slide.type === 'youtube') {
 
 					currentSlideContainer.innerHTML = `<a href="${slide.href}"><img src="${slide.src}" alt="Image"></a>`;

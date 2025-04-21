@@ -1099,12 +1099,13 @@ add_shortcode( 'wdm_auction_listing', 'wdm_auction_listing' );
 
 function wdm_get_mime_type( $url ) {
 	global $wpdb;
-
+	
 	/* $new_qry = $wpdb->prepare("SELECT post_mime_type FROM $wpdb->posts WHERE guid = %s", $url);*/
 
 	$table_posts = $wpdb->prefix . 'posts';
-
-	$new_qry = $GLOBALS['wpdb']->get_var($wpdb->prepare("SELECT post_mime_type FROM {$wpdb->prefix}posts WHERE guid = %s", $url));
+	$table_posts; 
+	
+	$new_qry = $wpdb->prepare("SELECT post_mime_type FROM $wpdb->posts WHERE guid = %s", $url);
 
 	$mime = $new_qry;
 

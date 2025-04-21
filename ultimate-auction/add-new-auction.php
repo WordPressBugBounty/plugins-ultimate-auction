@@ -221,8 +221,7 @@ $currency_code = substr( get_option( 'wdm_currency' ), -3 );
 			<label for="auction_excerpt"><?php esc_html_e( 'Product Short Description', 'wdm-ultimate-auction' ); ?></label>
 		</th>
 		<td>
-			<textarea name="auction_excerpt" id="auction_excerpt" class="regular-text ua_thin_textarea_field">
-				<?php echo esc_html( $wdm_post['excerpt'] ); ?></textarea>
+			<textarea name="auction_excerpt" id="auction_excerpt" class="regular-text ua_thin_textarea_field"><?php echo esc_html( $wdm_post['excerpt'] ); ?></textarea>
 		<div class="ult-auc-settings-tip"><?php esc_html_e( 'Enter short description (excerpt) for the product. This description is shown on the auctions listing page.', 'wdm-ultimate-auction' ); ?></div>
 	</td>
 	</tr>

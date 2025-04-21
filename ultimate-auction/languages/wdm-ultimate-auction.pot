@@ -1401,3 +1401,31 @@ msgstr ""
 #: ultimate-auction/settings-page.php:619
 msgid "Cheque"
 msgstr ""
+
+#: ultimate-auction/wdm-second_layout_list.php:11
+msgid "Product Summary"
+msgstr ""
+
+#: ultimate-auction/wdm-second_layout_list.php:15
+msgid "Bids Now"
+msgstr ""
+
+#: ultimate-auction/wdm-second_layout_detail.php:456
+msgid "Ending On:"
+msgstr ""
+
+#: ultimate-auction/wdm-second_layout_detail.php:466
+msgid "Timezone:"
+msgstr ""
+
+#: ultimate-auction/wdm-second_layout_detail.php:256
+msgid "Starting Bid : %s"
+msgstr ""
+
+#: ultimate-auction/wdm-second_layout_detail.php:401
+msgid "Starting Bid : %s"
+msgstr ""
+
+#: ultimate-auction/wdm-second_layout_detail.php:263
+msgid "Current Bid : %s"
+msgstr ""

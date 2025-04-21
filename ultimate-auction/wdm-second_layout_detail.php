@@ -28,14 +28,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 					$totalimages = 0;
 
 					$mnimg   = get_post_meta( $wdm_auction->ID, 'wdm-main-image', true );
-					$img_arr = array( 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'ico' );
+					$img_arr = array( 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'ico','webp' );
 					$vid_arr = array( 'mpg', 'mpeg', 'avi', 'mov', 'wmv', 'wma', 'mp4', '3gp', 'ogm', 'mkv', 'flv' );
 
 
 				for ( $c = 0; $c <= 3; $c++ ) {
 
 					$imgURL = get_post_meta( $wdm_auction->ID, 'wdm-image-' . ( $c + 1 ), true );
-
+					
 					$imgMime = wdm_get_mime_type( $imgURL );
 					$img_ext = explode( '.', $imgURL );
 					$img_ext = end( $img_ext );
@@ -43,14 +43,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 					if ( ( ! is_null( $imgMime ) && strstr( $imgMime, 'image/' ) ) || in_array( $img_ext, $img_arr ) ) {
 
 						$imgid     = attachment_url_to_postid( $imgURL );
-						$Image_URL = wp_get_attachment_image_url( $imgid, 'medium_large' );
-
+						if(!empty($imgid)){
+							$Image_URL = wp_get_attachment_image_url( $imgid, 'medium_large' );
+						}else{
+							$Image_URL = $imgURL;
+						}
+						
+						
 					} else {
 
 						$Image_URL = $imgURL;
-
+						
 					}
-
+					
 
 					if ( strpos( $img_ext, '?' ) !== false ) {
 						$img_ext = strtolower( strstr( $img_ext, '?', true ) );
@@ -67,6 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 							$image[ $c ]['type'] = 'image';
 							$image[ $c ]['src']  = $Image_URL;
+							
 						} elseif ( ( ! is_null( $imgMime ) && strstr( $imgMime, 'video/' ) ) || in_array( $img_ext, $vid_arr ) ) {
 							$images .= '<video class="thumbnail" src="' . get_post_meta( $wdm_auction->ID, 'wdm-image-' . ( $c + 1 ), true ) . '" controls></video>';
 
@@ -128,7 +134,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 						} else {
-
+							
 							$images .= '<img class="thumbnail"  src="' . plugins_url( 'img/image_not_found.png', __FILE__ ) . '" alt="Thumbnail ' . ( $c + 1 ) . '" />';
 
 							$NoImgURL = plugins_url( 'img/image_not_found.png', __FILE__ );
@@ -161,6 +167,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					// wp_localize_script('wdm-slider-js', 'Totalarray', $totalcount);
 
 				}
+				
 				wp_localize_script( 'wdm-slider-js', 'sliderJsVars', $sliderJsVars );
 
 
@@ -453,7 +460,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							$wdm_time_zone = get_option( 'wdm_time_zone' );
 						if ( get_option( 'wdm_show_enddate_msg' ) == 'Yes' ) {
 							?>
-								<div class="Gen-bold-text"><strong>Ending On:</strong>
+								<div class="Gen-bold-text"><strong><?php esc_html_e( 'Ending On:', 'wdm-ultimate-auction' ); ?></strong>
 										<?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $wdm_end_time ) ) ); ?>
 										<?php echo esc_html( date_i18n( get_option( 'time_format' ), strtotime( $wdm_end_time ) ) ); ?>
 								</div>
@@ -463,7 +470,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						if ( get_option( 'wdm_show_timezone_msg' ) == 'Yes' ) {
 							?>
 					
-						<div class="Gen-bold-text"><strong>Timezone:</strong><?php echo esc_html( $wdm_time_zone ); ?></div>
+						<div class="Gen-bold-text"><strong><?php esc_html_e( 'Timezone:', 'wdm-ultimate-auction' ); ?></strong><?php echo esc_html( $wdm_time_zone ); ?></div>
 
 							<?php
 						}
