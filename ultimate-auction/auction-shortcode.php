@@ -474,7 +474,7 @@ function wdm_auction_listing( $atts = array() ) {
 									</a>
 							</div>
 							<?php
-							if ( $curr_price >= get_post_meta( $wdm_auction->ID, 'wdm_lowest_bid', true ) ) {
+							if ( $total_bids > 0 && $curr_price >= get_post_meta( $wdm_auction->ID, 'wdm_lowest_bid', true ) ) {
 								?>
 								<div class="wdm_reserved_note wdm-mark-green wdm-align-left">
 									<em><?php esc_html_e( 'Reserve price has been met.', 'wdm-ultimate-auction' ); ?></em>

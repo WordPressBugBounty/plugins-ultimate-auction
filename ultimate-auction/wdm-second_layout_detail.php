@@ -421,7 +421,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						}
 
 
-						if ( $curr_price >= get_post_meta( $wdm_auction->ID, 'wdm_lowest_bid', true ) ) {
+						if ( $total_bids > 0 && $curr_price >= get_post_meta( $wdm_auction->ID, 'wdm_lowest_bid', true ) ) {
 							?>
 							
 							<p><?php esc_html_e( 'Reserve price has been met.', 'wdm-ultimate-auction' ); ?></p>

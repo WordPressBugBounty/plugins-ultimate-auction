@@ -3,8 +3,8 @@ Contributors: nitesh_singh
 Donate link: http://auctionplugin.net/
 Tags: auction, auction plugin, wordpress auction, ebay auction, bidding
 Requires at least: 4.6
-Tested up to: 6.8
-Stable tag: 4.3.1
+Tested up to: 6.8.2
+Stable tag: 4.3.2
 License: GPLv2 or later
 
 Ultimate Wordpress Auction plugin is the best plugin to host auctions on your wordpress site.
@@ -350,6 +350,16 @@ For example:
 == Frequently Asked Questions ==
 
 == Changelog ==
+
+= 4.3.2 =
+
+1. Fix:
+
+	Resolved the issue with the reserve price message when the starting price and lowest price are the same.
+
+2. Improvement:
+	
+	Confirmed compatibility of the Ultimate WordPress Auction Plugin with the latest version of WordPress.
 
 = 4.3.1 =
 
