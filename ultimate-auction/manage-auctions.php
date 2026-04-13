@@ -6,22 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
-$wdm_settings_nonce = wp_create_nonce( 'wdm_settings_nonce' );
-if ( ! isset( $wdm_settings_nonce ) || ! wp_verify_nonce( $wdm_settings_nonce, 'wdm_settings_nonce' ) ) {
-	wp_die( esc_html__( 'Nonce verification failed', 'wdm-ultimate-auction' ) );
-}
-$this->auction_type = ( isset( $_GET['auction_type'] ) && $_GET['auction_type'] == 'expired' ) ? 'expired' : 'live';
+$this->auction_type = ( isset( $_GET['auction_type'] ) && 'expired' === $_GET['auction_type'] ) ? 'expired' : 'live';
 
 class Auctions_List_Table extends WP_List_Table {
 	var $allData;
 	var $auction_type;
 
 	function wdm_get_data() {
-		$wdm_settings_nonce = wp_create_nonce( 'wdm_settings_nonce' );
-		if ( ! isset( $wdm_settings_nonce ) || ! wp_verify_nonce( $wdm_settings_nonce, 'wdm_settings_nonce' ) ) {
-			wp_die( esc_html__( 'Nonce verification failed', 'wdm-ultimate-auction' ) );
-		}
-		if ( isset( $_GET['auction_type'] ) && $_GET['auction_type'] == 'expired' ) {
+		if ( isset( $_GET['auction_type'] ) && 'expired' === $_GET['auction_type'] ) {
 			$args = array(
 				'posts_per_page' => -1,
 				'post_type'      => 'ultimate-auction',
@@ -60,10 +52,10 @@ class Auctions_List_Table extends WP_List_Table {
 			if ( empty( $thumb_img ) || $thumb_img == null ) {
 				$thumb_img = plugins_url( 'img/no-pic.jpg', __FILE__ );
 			}
-			$row['image_1'] = "<input class='wdm_chk_auc_act' value=" . $single_auction->ID . " type='checkbox' style='margin: 0 5px 0 0;' />" . "<img src='" . $thumb_img . "' width='90'";
+			$row['image_1'] = "<input class='wdm_chk_auc_act' value='" . intval( $single_auction->ID ) . "' type='checkbox' style='margin: 0 5px 0 0;' />" . "<img src='" . esc_url( $thumb_img ) . "' width='90'";
 
 			if ( $this->auction_type == 'live' ) {
-				$row['action'] = "<a href='?page=add-new-auction&edit_auction=" . $single_auction->ID . "'>" . __( 'Edit', 'wdm-ultimate-auction' ) . "</a> <br /><br /> <div id='wdm-delete-auction-" . $single_auction->ID . "' style='color:red;cursor:pointer;'>" . __( 'Delete', 'wdm-ultimate-auction' ) . " <span class='auc-ajax-img'></span></div> <br /> <div id='wdm-end-auction-" . $single_auction->ID . "' style='color:#21759B;cursor:pointer;'>" . __( 'End Auction', 'wdm-ultimate-auction' ) . '</div>';
+				$row['action'] = "<a href='" . esc_url( admin_url( 'admin.php?page=add-new-auction&edit_auction=' . $single_auction->ID ) ) . "'>" . esc_html__( 'Edit', 'wdm-ultimate-auction' ) . "</a> <br /><br /> <div id='wdm-delete-auction-" . intval( $single_auction->ID ) . "' style='color:red;cursor:pointer;'>" . esc_html__( 'Delete', 'wdm-ultimate-auction' ) . " <span class='auc-ajax-img'></span></div> <br /> <div id='wdm-end-auction-" . intval( $single_auction->ID ) . "' style='color:#21759B;cursor:pointer;'>" . esc_html__( 'End Auction', 'wdm-ultimate-auction' ) . '</div>';
 			
 				//require 'ajax-actions/end-auction.php';
 
@@ -105,7 +97,7 @@ class Auctions_List_Table extends WP_List_Table {
 
 			
 			} else {
-				$row['action'] = "<div id='wdm-delete-auction-" . $single_auction->ID . "' style='color:red;cursor:pointer;'>" . __( 'Delete', 'wdm-ultimate-auction' ) . " <span class='auc-ajax-img'></span></div><br /><a href='?page=add-new-auction&edit_auction=" . $single_auction->ID . "&reactivate'>" . __( 'Reactivate', 'wdm-ultimate-auction' ) . '</a>';
+				$row['action'] = "<div id='wdm-delete-auction-" . intval( $single_auction->ID ) . "' style='color:red;cursor:pointer;'>" . esc_html__( 'Delete', 'wdm-ultimate-auction' ) . " <span class='auc-ajax-img'></span></div><br /><a href='" . esc_url( admin_url( 'admin.php?page=add-new-auction&edit_auction=' . $single_auction->ID . '&reactivate' ) ) . "'>" . esc_html__( 'Reactivate', 'wdm-ultimate-auction' ) . '</a>';
 			}
 
 			// for bidding logic
@@ -130,11 +122,11 @@ class Auctions_List_Table extends WP_List_Table {
 				foreach ( $results as $result ) {
 					// $row_bidders.="<li><strong><a href='#'>".$result->name."</a></strong> - ".$currency_code." ".$result->bid."</li>";
 
-					$row_bidders .= "<li><strong><a href='#' id='wdm_bidder_id_" . $result->id . "' class='wdm_bidder_info wdm-margin-bottom wdm_bidder_info_" . $single_auction->ID . "'>" . $result->name . '</a></strong> - ' . $currency_code . ' ' . $result->bid;
+					$row_bidders .= "<li><strong><a href='#' id='wdm_bidder_id_" . intval( $result->id ) . "' class='wdm_bidder_info wdm-margin-bottom wdm_bidder_info_" . intval( $single_auction->ID ) . "'>" . esc_html( $result->name ) . '</a></strong> - ' . esc_html( $currency_code ) . ' ' . esc_html( $result->bid );
 					if ( ! empty( $result ) ) {
 
-						$row_bidders .= "<div class='wdm-margin-bottom wdm_bidder_id_" . $result->id . "' style='display:none;'>";
-						$row_bidders .= "<a href='mailto:" . $result->email . "'>" . $result->email . '</a></div></li>';
+						$row_bidders .= "<div class='wdm-margin-bottom wdm_bidder_id_" . intval( $result->id ) . "' style='display:none;'>";
+						$row_bidders .= "<a href='mailto:" . esc_attr( $result->email ) . "'>" . esc_html( $result->email ) . '</a></div></li>';
 					}
 
 					if ( $cnt_bidder == 0 ) {
@@ -144,8 +136,8 @@ class Auctions_List_Table extends WP_List_Table {
 
 					++$cnt_bidder;
 				}
-				$row['bidders']  = "<div class='wdm-bidder-list-" . $single_auction->ID . "'><ul>" . $row_bidders . '</ul></div>';
-				$row['bidders'] .= "<div id='wdm-cancel-bidder-" . $bidder_id . "' style='font-weight:bold;color:#21759B;cursor:pointer;'>" . __( 'Cancel Last Bid', 'wdm-ultimate-auction' ) . '</div>';
+				$row['bidders']  = "<div class='wdm-bidder-list-" . intval( $single_auction->ID ) . "'><ul>" . $row_bidders . '</ul></div>';
+				$row['bidders'] .= "<div id='wdm-cancel-bidder-" . intval( $bidder_id ) . "' style='font-weight:bold;color:#21759B;cursor:pointer;'>" . esc_html__( 'Cancel Last Bid', 'wdm-ultimate-auction' ) . '</div>';
 
 				/*$qry = "SELECT * FROM ".$wpdb->prefix."wdm_bidders WHERE auction_id =".$single_auction->ID." ORDER BY id DESC";*/
 
@@ -153,8 +145,7 @@ class Auctions_List_Table extends WP_List_Table {
 
 				$all_bids = $qry;
 				if ( count( $all_bids ) > 5 ) {
-					$row['bidders'] .= "<br />
-                <a href='#' class='see-more showing-top-5' rel='" . $single_auction->ID . "' >" . __( 'See more', 'wdm-ultimate-auction' ) . '</a>';
+					$row['bidders'] .= '<br /><a href="#" class="see-more showing-top-5" rel="' . intval( $single_auction->ID ) . '">' . esc_html__( 'See more', 'wdm-ultimate-auction' ) . '</a>';
 				}
 				//require 'ajax-actions/cancel-bidder.php';
 				?>  
@@ -448,12 +439,7 @@ class Auctions_List_Table extends WP_List_Table {
 
 	function prepare_items() {
 
-		$wdm_settings_nonce = wp_create_nonce( 'wdm_settings_nonce' );
-		if ( ! isset( $wdm_settings_nonce ) || ! wp_verify_nonce( $wdm_settings_nonce, 'wdm_settings_nonce' ) ) {
-			wp_die( esc_html__( 'Nonce verification failed', 'wdm-ultimate-auction' ) );
-		}
-
-		$this->auction_type    = ( isset( $_GET['auction_type'] ) && $_GET['auction_type'] == 'expired' ) ? 'expired' : 'live';
+		$this->auction_type    = ( isset( $_GET['auction_type'] ) && 'expired' === $_GET['auction_type'] ) ? 'expired' : 'live';
 		$columns               = $this->get_columns();
 		$hidden                = array();
 		$sortable              = $this->get_sortable_columns();
@@ -470,11 +456,6 @@ class Auctions_List_Table extends WP_List_Table {
 	}
 
 	function wdm_sort_array( $args ) {
-
-		$wdm_settings_nonce = wp_create_nonce( 'wdm_settings_nonce' );
-		if ( ! isset( $wdm_settings_nonce ) || ! wp_verify_nonce( $wdm_settings_nonce, 'wdm_settings_nonce' ) ) {
-			wp_die( esc_html__( 'Nonce verification failed', 'wdm-ultimate-auction' ) );
-		}
 
 		if ( ! empty( $args ) ) {
 			$orderby = ( ! empty( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'ID';
@@ -515,11 +496,7 @@ class Auctions_List_Table extends WP_List_Table {
 	}
 }
 
-if ( isset( $_GET['auction_type'] ) ) {
-	$manage_auction_tab = esc_attr( $_GET['auction_type'] );
-} else {
-	$manage_auction_tab = 'live';
-}
+$manage_auction_tab = ( isset( $_GET['auction_type'] ) && 'expired' === $_GET['auction_type'] ) ? 'expired' : 'live';
 ?>
 <ul class="subsubsub">
 	<li><a href="?page=manage_auctions&auction_type=live" class="<?php echo $manage_auction_tab == 'live' ? 'current' : ''; ?>"><?php esc_html_e( 'Live Auctions', 'wdm-ultimate-auction' ); ?></a>|</li>

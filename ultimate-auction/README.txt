@@ -3,8 +3,8 @@ Contributors: nitesh_singh
 Donate link: http://auctionplugin.net/
 Tags: auction, auction plugin, wordpress auction, ebay auction, bidding
 Requires at least: 4.6
-Tested up to: 6.8.2
-Stable tag: 4.3.2
+Tested up to: 6.9.4
+Stable tag: 4.3.3
 License: GPLv2 or later
 
 Ultimate Wordpress Auction plugin is the best plugin to host auctions on your wordpress site.
@@ -350,6 +350,24 @@ For example:
 == Frequently Asked Questions ==
 
 == Changelog ==
+
+= 4.3.3 =
+
+1. Security:
+
+	Removed base64 misuse in email AJAX callbacks; server now reads auction data directly from the database.
+	Removed unauthenticated (nopriv) access from admin-only AJAX actions.
+	Replaced role-name capability checks with proper manage_options capability.
+	Fixed broken nonce patterns in settings and manage-auctions pages.
+	Added server-side bid amount validation (no longer JS-only).
+
+2. Fix:
+
+	Sanitized all $_POST and $_GET inputs with proper WordPress functions (sanitize_text_field, absint, sanitize_email, esc_url_raw).
+	Fixed output escaping for HTML-generating filter values (wp_kses_post instead of esc_html).
+	Escaped all variables in email templates and admin table rows.
+	Passed nonce to AJAX script via wp_localize_script for proper verification.
+	Resolved incorrect redirection to the custom login URL for bidders attempting to bid without logging in.
 
 = 4.3.2 =
 

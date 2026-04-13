@@ -101,30 +101,24 @@ function wdm_email_auction_winner() {
 						
 						<script type="text/javascript">
 						jQuery(document).ready(function($) {
-							var ajaxurl = '<?php echo esc_url(admin_url('admin-ajax.php')); ?>';
+							// Passes only the auction ID and winning bid; server reads title/content/email from DB.
+							var ajaxurl = '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>';
 							var data = {
 								action: 'send_auction_email',
-								auc_email: '<?php echo esc_attr(base64_encode($winner_email)); ?>',
-								auc_bid: '<?php echo esc_attr($winner_bid); ?>',
-								auc_id: '<?php echo esc_attr($ca->ID); ?>',
-								auc_title: '<?php echo esc_attr(base64_encode($ca->post_title)); ?>',
-								auc_cont: '<?php echo esc_attr(base64_encode($ca->post_content)); ?>',
-								auc_url: '<?php echo esc_url($return_url); ?>',
-								uwaajax_nonce: '<?php echo esc_attr(wp_create_nonce('uwaajax_nonce')); ?>'
+								auc_bid: '<?php echo esc_attr( $winner_bid ); ?>',
+								auc_id: '<?php echo intval( $ca->ID ); ?>',
+								auc_url: '<?php echo esc_url( $return_url ); ?>',
+								uwaajax_nonce: '<?php echo esc_attr( wp_create_nonce( 'uwaajax_nonce' ) ); ?>'
 							};
 							$.ajax({
 								type: 'POST',
 								url: ajaxurl,
 								data: data,
-								success: function(response) {
-									if (response.success) {
-										console.log('Email sent successfully');
-									} else {
-										console.log('Error: ' + response.data);
-									}
+								success: function( response ) {
+									// Silent success — email trigger is a background task.
 								},
-								error: function(jqXHR, textStatus, errorThrown) {
-									console.log('AJAX Error: ' + textStatus + ' - ' + errorThrown);
+								error: function( jqXHR, textStatus ) {
+									// Silent error — will retry on next page load if email not yet sent.
 								}
 							});
 						});

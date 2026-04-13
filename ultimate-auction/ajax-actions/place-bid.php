@@ -261,8 +261,18 @@
 			var redirect_url=$('.wdm-login-to-place-bid').data('login-url');
 					var bid_val=$("#wdm-bidder-bidval").val();
 			
-			if (bid_val.length!=0) {
-			var new_url = redirect_url+ "&wdm-bid-val=" + bid_val;
+			if ( bid_val.length!=0 ) {
+				
+				var wdm_login_url = "<?php echo get_option( 'wdm_login_page_url', "" ); ?>";
+				
+				if (wdm_login_url != "") {		
+					
+					// var new_url = redirect_url + "?wdm-bid-val=" + bid_val;
+					var new_url = redirect_url;					
+				} else {				
+				    var new_url = redirect_url+ "&wdm-bid-val=" + bid_val;
+				}				
+				
 			}
 			else{
 				var new_url = redirect_url;

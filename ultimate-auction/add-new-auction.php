@@ -5,10 +5,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 wp_enqueue_media();
 $post_id;
 if ( ! empty( $_POST ) ) {
-	if ( isset( $_POST['ua_wdm_add_auc'] ) && wp_verify_nonce( $_POST['ua_wdm_add_auc'], 'ua_wp_n_f' ) ) {
-		$auction_title   = ( ! empty( $_POST['auction_title'] ) ) ? ( $_POST['auction_title'] ) : '';
-		$auction_content = ( ! empty( $_POST['auction_description'] ) ) ? ( $_POST['auction_description'] ) : '';
-		$auction_excerpt = ( ! empty( $_POST['auction_excerpt'] ) ) ? ( $_POST['auction_excerpt'] ) : '';
+	if ( isset( $_POST['ua_wdm_add_auc'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ua_wdm_add_auc'] ) ), 'ua_wp_n_f' ) ) {
+
+		// Only administrators may add or update auctions.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Permission denied', 'wdm-ultimate-auction' ) );
+		}
+
+		$auction_title   = ! empty( $_POST['auction_title'] ) ? sanitize_text_field( wp_unslash( $_POST['auction_title'] ) ) : '';
+		$auction_content = ! empty( $_POST['auction_description'] ) ? wp_kses_post( wp_unslash( $_POST['auction_description'] ) ) : '';
+		$auction_excerpt = ! empty( $_POST['auction_excerpt'] ) ? sanitize_textarea_field( wp_unslash( $_POST['auction_excerpt'] ) ) : '';
 
 		$auc_end_tm   = isset( $_POST['end_date'] ) ? strtotime( $_POST['end_date'] ) : 0;
 		/*$blog_curr_tm = strtotime( date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ) );*/
@@ -93,27 +99,34 @@ if ( ! empty( $_POST ) ) {
 				$temp = term_exists( 'live', 'auction-status' );
 				wp_set_post_terms( $post_id, $temp['term_id'], 'auction-status' );
 
-				// update options
+				// Update image URLs — sanitize each URL before storing.
 				for ( $u = 1; $u <= 4; $u++ ) {
-					update_post_meta( $post_id, 'wdm-image-' . $u, $_POST[ 'auction_image_' . $u ] );
+					$img_url = isset( $_POST[ 'auction_image_' . $u ] ) ? esc_url_raw( wp_unslash( $_POST[ 'auction_image_' . $u ] ) ) : '';
+					update_post_meta( $post_id, 'wdm-image-' . $u, $img_url );
 				}
 
 				if ( empty( $_POST['buy_it_now_price'] ) ) {
 					update_post_meta( $post_id, 'wdm_buy_it_now', '' );
 				} else {
-					update_post_meta( $post_id, 'wdm_buy_it_now', round( $_POST['buy_it_now_price'], 2 ) );
+					update_post_meta( $post_id, 'wdm_buy_it_now', round( (float) $_POST['buy_it_now_price'], 2 ) );
 				}
 
-				update_post_meta( $post_id, 'wdm-main-image', $_POST['auction_main_image'] );
-				update_post_meta( $post_id, 'wdm_listing_ends', $_POST['end_date'] );
-				update_post_meta( $post_id, 'wdm_opening_bid', round( $_POST['opening_bid'], 2 ) );
-				update_post_meta( $post_id, 'wdm_lowest_bid', round( $_POST['lowest_bid'], 2 ) );
-				// update_post_meta($post_id, 'wdm_buy_it_now', round($_POST["buy_it_now_price"], 2));
-				update_post_meta( $post_id, 'wdm_incremental_val', round( $_POST['incremental_value'], 2 ) );
-				update_post_meta( $post_id, 'wdm_payment_method', isset( $_POST['payment_method'] ) ? $_POST['payment_method'] : '' );
+				$main_image    = isset( $_POST['auction_main_image'] ) ? sanitize_text_field( wp_unslash( $_POST['auction_main_image'] ) ) : '';
+				$end_date      = isset( $_POST['end_date'] ) ? sanitize_text_field( wp_unslash( $_POST['end_date'] ) ) : '';
+				$opening_bid   = isset( $_POST['opening_bid'] ) ? round( (float) $_POST['opening_bid'], 2 ) : 0;
+				$lowest_bid    = isset( $_POST['lowest_bid'] ) ? round( (float) $_POST['lowest_bid'], 2 ) : 0;
+				$incr_val      = isset( $_POST['incremental_value'] ) ? round( (float) $_POST['incremental_value'], 2 ) : 0;
+				$pay_method    = isset( $_POST['payment_method'] ) ? sanitize_text_field( wp_unslash( $_POST['payment_method'] ) ) : '';
 
-				// if another bidding engine is active
-				$bidding_engine = ( isset( $_POST['bidding_engine'] ) ? $_POST['bidding_engine'] : '' );
+				update_post_meta( $post_id, 'wdm-main-image', $main_image );
+				update_post_meta( $post_id, 'wdm_listing_ends', $end_date );
+				update_post_meta( $post_id, 'wdm_opening_bid', $opening_bid );
+				update_post_meta( $post_id, 'wdm_lowest_bid', $lowest_bid );
+				update_post_meta( $post_id, 'wdm_incremental_val', $incr_val );
+				update_post_meta( $post_id, 'wdm_payment_method', $pay_method );
+
+				// If another bidding engine is active.
+				$bidding_engine = isset( $_POST['bidding_engine'] ) ? sanitize_text_field( wp_unslash( $_POST['bidding_engine'] ) ) : '';
 				update_post_meta( $post_id, 'wdm_bidding_engine', $bidding_engine );
 				for ( $im = 1; $im <= 4; $im++ ) {
 					if ( get_post_meta( $post_id, 'wdm-main-image', true ) == 'main_image_' . $im ) {
@@ -188,7 +201,7 @@ $currency_code = substr( get_option( 'wdm_currency' ), -3 );
         </td>
     </tr>';
 	}
-	echo esc_html( $after_thumb );
+	echo wp_kses_post( $after_thumb );
 	?>
 	
 	<tr valign="top">
@@ -228,7 +241,7 @@ $currency_code = substr( get_option( 'wdm_currency' ), -3 );
 	<?php
 		$after_desc = '';
 		$after_desc = apply_filters( 'wdm_ua_after_product_desc', $after_desc );
-		echo esc_html( $after_desc );
+		echo wp_kses_post( $after_desc );
 
 	for ( $p = 1; $p <= 4; $p++ ) {
 		$single_img = $this->wdm_post_meta( 'wdm-image-' . $p );

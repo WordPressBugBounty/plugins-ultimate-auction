@@ -84,24 +84,28 @@ if ( ! class_exists( 'wdm_settings' ) ) {
 				"1.0", array("in_footer" => false) );
 		}
 
-		// list bidders Ajax callback - 'See More' link on 'Manage Auctions' page
+		/**
+		 * AJAX callback to list bidders — 'See More' link on Manage Auctions page.
+		 *
+		 * @since 4.3.2
+		 * @return void
+		 */
 		public function wdm_ajax_callback() {
 
-			global $wpdb;
-			$wdm_auction_listing_nonce = wp_create_nonce( 'wdm_auction_listing_nonce' );
-			$currency_code = substr( get_option( 'wdm_currency' ), -3 );
+			// Capability check — only admins may view bidder details.
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_die( esc_html__( 'Permission denied', 'wdm-ultimate-auction' ) );
+			}
 
-			/*
-			if($_POST["show_rows"] == -1)
-			$query = "SELECT * FROM ".$wpdb->prefix."wdm_bidders WHERE auction_id =".esc_attr($_POST["auction_id"])." ORDER BY date DESC";
-			else
-			$query = "SELECT * FROM ".$wpdb->prefix."wdm_bidders WHERE auction_id =".esc_attr($_POST["auction_id"])." ORDER BY date DESC LIMIT 5";*/
-
-			$table     = $wpdb->prefix . 'wdm_bidders';
-			if ( ! isset( $wdm_auction_listing_nonce ) || ! wp_verify_nonce( $wdm_auction_listing_nonce, 'wdm_auction_listing_nonce' ) ) {
+			// Verify the nonce submitted from the JS side.
+			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'wdm_auction_listing_nonce' ) ) {
 				wp_die( esc_html__( 'Nonce verification failed', 'wdm-ultimate-auction' ) );
 			}
-			$auctionid = $_POST['auction_id'];
+
+			global $wpdb;
+			$currency_code = substr( get_option( 'wdm_currency' ), -3 );
+
+			$auctionid = absint( $_POST['auction_id'] ?? 0 );
 			
 			if ( $_POST['show_rows'] == -1 ) {
 
@@ -160,27 +164,28 @@ if ( ! class_exists( 'wdm_settings' ) ) {
 				$ua_icon_url = esc_url( plugins_url( 'img/favicon_black.png', __FILE__ ) );
 			}
 
-			add_menu_page( __( 'Ultimate Auction', 'wdm-ultimate-auction' ), __( 'Ultimate Auction', 'wdm-ultimate-auction' ), 'administrator', 'ultimate-auction', array( $this, 'create_admin_page' ), $ua_icon_url );
-			add_submenu_page( 'ultimate-auction', __( 'Settings', 'wdm-ultimate-auction' ), __( 'Settings', 'wdm-ultimate-auction' ), 'administrator', 'ultimate-auction', array( $this, 'create_admin_page' ) );
-			add_submenu_page( 'ultimate-auction', __( 'Payment', 'wdm-ultimate-auction' ), __( 'Payment', 'wdm-ultimate-auction' ), 'administrator', 'payment', array( $this, 'create_admin_page' ) );
+			add_menu_page( __( 'Ultimate Auction', 'wdm-ultimate-auction' ), __( 'Ultimate Auction', 'wdm-ultimate-auction' ), 'manage_options', 'ultimate-auction', array( $this, 'create_admin_page' ), $ua_icon_url );
+			add_submenu_page( 'ultimate-auction', __( 'Settings', 'wdm-ultimate-auction' ), __( 'Settings', 'wdm-ultimate-auction' ), 'manage_options', 'ultimate-auction', array( $this, 'create_admin_page' ) );
+			add_submenu_page( 'ultimate-auction', __( 'Payment', 'wdm-ultimate-auction' ), __( 'Payment', 'wdm-ultimate-auction' ), 'manage_options', 'payment', array( $this, 'create_admin_page' ) );
 			do_action( 'ua_add_submenu_after_setting', 'ultimate-auction', array( $this, 'create_admin_page' ) );
-			add_submenu_page( 'ultimate-auction', __( 'Add Auction', 'wdm-ultimate-auction' ), __( 'Add Auction', 'wdm-ultimate-auction' ), 'administrator', 'add-new-auction', array( $this, 'create_admin_page' ) );
-			add_submenu_page( 'ultimate-auction', __( 'Manage Auctions', 'wdm-ultimate-auction' ), __( 'Manage Auctions', 'wdm-ultimate-auction' ), 'administrator', 'manage_auctions', array( $this, 'create_admin_page' ) );
+			add_submenu_page( 'ultimate-auction', __( 'Add Auction', 'wdm-ultimate-auction' ), __( 'Add Auction', 'wdm-ultimate-auction' ), 'manage_options', 'add-new-auction', array( $this, 'create_admin_page' ) );
+			add_submenu_page( 'ultimate-auction', __( 'Manage Auctions', 'wdm-ultimate-auction' ), __( 'Manage Auctions', 'wdm-ultimate-auction' ), 'manage_options', 'manage_auctions', array( $this, 'create_admin_page' ) );
 			do_action( 'ua_add_auction_submenu', 'ultimate-auction', array( $this, 'create_admin_page' ) );
-			// add_submenu_page( 'ultimate-auction', __("Support", "wdm-ultimate-auction"), __("Support", "wdm-ultimate-auction"), 'administrator', 'help-support', array($this, 'create_admin_page') );
-			add_submenu_page( 'ultimate-auction', __( 'PRO Features', 'wdm-ultimate-auction' ), __( "<span style='color:#ff9a4b'>PRO Features</span>", 'wdm-ultimate-auction' ), 'administrator', 'wdm_why_pro', array( $this, 'wdm_why_pro_page_handler' ) );
+			// add_submenu_page( 'ultimate-auction', __("Support", "wdm-ultimate-auction"), __("Support", "wdm-ultimate-auction"), 'manage_options', 'help-support', array($this, 'create_admin_page') );
+			add_submenu_page( 'ultimate-auction', __( 'PRO Features', 'wdm-ultimate-auction' ), __( "<span style='color:#ff9a4b'>PRO Features</span>", 'wdm-ultimate-auction' ), 'manage_options', 'wdm_why_pro', array( $this, 'wdm_why_pro_page_handler' ) );
 		}
 		public function wdm_why_pro_page_handler() {
 			include_once 'wdm-why-pro.php';
 		}
 
-		// enqueue js and style files to handle datetime picker and image upload
+		/**
+		 * Enqueue admin JS and CSS files for the date picker and media upload.
+		 *
+		 * @since 4.3.2
+		 * @return void
+		 */
 		public function wdm_enqueue_style() {
-			$wdm_enqueue_style_nonce = wp_create_nonce( 'wdm_enqueue_style_nonce' );
-			if ( ! isset( $wdm_enqueue_style_nonce ) || ! wp_verify_nonce( $wdm_enqueue_style_nonce, 'wdm_enqueue_style_nonce' ) ) {
-				wp_die( esc_html__( 'Nonce verification failed', 'wdm-ultimate-auction' ) );
-			}
-			if ( isset( $_GET['page'] ) && $_GET['page'] == 'add-new-auction' ) {
+			if ( isset( $_GET['page'] ) && 'add-new-auction' === $_GET['page'] ) {
 						wp_enqueue_style( 'date-picker-style', plugins_url( '/css/jquery-ui.css', __FILE__ ), 
 						 array(), "1.0" );
 						wp_enqueue_script( 'jquery-timepicker-js', plugins_url( '/js/date-picker.js', __FILE__ ), 
@@ -189,48 +194,35 @@ if ( ! class_exists( 'wdm_settings' ) ) {
 							array(), "1.0" );
 			}
 
-			if ( isset( $_GET['page'] ) && $_GET['page'] == 'manage_auctions' ) {
-					wp_enqueue_script( 'wdm-ajax-scripts', plugins_url( '/js/wdm-ajax-scripts.js', __FILE__ ), 
-						array( 'jquery' ), "1.0", array("in_footer" => false) );
+			if ( isset( $_GET['page'] ) && 'manage_auctions' === $_GET['page'] ) {
+					wp_enqueue_script( 'wdm-ajax-scripts', plugins_url( '/js/wdm-ajax-scripts.js', __FILE__ ),
+						array( 'jquery' ), '1.0', array( 'in_footer' => false ) );
 					$trans_ar = array(
-						'msg1' => __( 'Showing All' ),
-						'msg2' => __( 'Showing Top 5' ),
+						'msg1'  => __( 'Showing All', 'wdm-ultimate-auction' ),
+						'msg2'  => __( 'Showing Top 5', 'wdm-ultimate-auction' ),
+						'nonce' => wp_create_nonce( 'wdm_auction_listing_nonce' ),
 					);
 					wp_localize_script( 'wdm-ajax-scripts', 'wdm_ua_obj_l10n1', $trans_ar );
 			}
 		}
 
+		/**
+		 * Render the main admin page with tabbed navigation.
+		 *
+		 * @since 4.3.2
+		 * @return void
+		 */
 		public function create_admin_page() {
 			?>
 <div class="wrap" id="wdm_auction_setID">
-			<?php // screen_icon('options-general'); ?>
 	<h2>
 			<?php esc_html_e( 'Ultimate Auction', 'wdm-ultimate-auction' ); ?>
 	</h2>
-
-	<!--  <div id="ultimate-auction-banner">
-		<div class="get_uwa_pro">
-
-			<a rel="nofollow" href="https://auctionplugin.net?utm_source=ultimate plugin&utm_medium=horizontal banner&utm_campaign=learn more" target="_blank"> 
-			<img src="<?php echo esc_url( plugins_url( '/img/UWCA_row.jpg', __FILE__ ) ); ?>" alt="" />
-			</a>
-			<div class="clear"></div>
-		</div>
--->
 	</div>
 	<div class="uwa_setting_left">
 	<!--code for displaying tabbed navigation-->
 			<?php
-			$wdm_enqueue_style_nonce = wp_create_nonce( 'wdm_enqueue_style_nonce' );
-			if ( ! isset( $wdm_enqueue_style_nonce ) || ! wp_verify_nonce( $wdm_enqueue_style_nonce, 'wdm_enqueue_style_nonce' ) ) {
-				wp_die( esc_html__( 'Nonce verification failed', 'wdm-ultimate-auction' ) );
-			}
-			if ( isset( $_GET['page'] ) ) {
-				$active_tab = esc_attr( $_GET['page'] );
-			} //
-			else {
-				$active_tab = 'ultimate-auction';
-			}
+			$active_tab = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : 'ultimate-auction';
 
 			?>
 
@@ -362,12 +354,8 @@ if ( ! class_exists( 'wdm_settings' ) ) {
 			
 </div>
 	<?php
-		$wdm_settings_nonce = wp_create_nonce( 'wdm_settings_nonce' );
-		if ( ! isset( $wdm_settings_nonce ) || ! wp_verify_nonce( $wdm_settings_nonce, 'wdm_settings_nonce' ) ) {
-			wp_die( esc_html__( 'Nonce verification failed', 'wdm-ultimate-auction' ) );
-		}
 			if ( isset( $_GET['settings-updated'] ) ) {
-				echo "<div class='updated'><p><strong>" . esc_html( __( 'Settings saved.', 'wdm-ultimate-auction' ) ) . '</strong></p></div>';
+				echo "<div class='updated'><p><strong>" . esc_html__( 'Settings saved.', 'wdm-ultimate-auction' ) . '</strong></p></div>';
 			}
 		}
 
@@ -379,15 +367,15 @@ if ( ! class_exists( 'wdm_settings' ) ) {
 				array(), "1.0" );
 
 			register_setting(
-				'test_option_group', // this has to be same as the parameter in settings_fields
-				'wdm_auc_settings_data', // The name of an option to sanitize and save, basically add_option('wdm_auc_settings_data')
-				array( $this, 'wdm_validate_save_data' )// callback function for sanitizing data
+				'test_option_group',
+				'wdm_auc_settings_data',
+				array( $this, 'wdm_validate_save_data' )
 			);
-			$wdm_settings_nonce = wp_create_nonce( 'wdm_settings_nonce' );
-			if ( ! isset( $wdm_settings_nonce ) || ! wp_verify_nonce( $wdm_settings_nonce, 'wdm_settings_nonce' ) ) {
-				wp_die( esc_html__( 'Nonce verification failed', 'wdm-ultimate-auction' ) );
-			}
-			if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'ultimate-auction' ) && isset( $_GET['setting_section'] ) && ( $_GET['setting_section'] == 'auction' ) ) {
+
+			$current_page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+			$setting_section = isset( $_GET['setting_section'] ) ? sanitize_text_field( wp_unslash( $_GET['setting_section'] ) ) : '';
+
+			if ( 'ultimate-auction' === $current_page && 'auction' === $setting_section ) {
 				add_settings_section(
 					'setting_section_id', // this is the unique id for the section
 					__( 'General Settings', 'wdm-ultimate-auction' ),  // title or name of the section that appears on the page
@@ -502,8 +490,7 @@ if ( ! class_exists( 'wdm_settings' ) ) {
 					'setting_section_id'
 				);
 
-			} elseif ( isset( $_GET['page'] ) && ( $_GET['page'] == 'ultimate-auction' ) && isset( $_GET['setting_section'] ) && ( $_GET['setting_section'] == 'email' )
-			) {
+			} elseif ( 'ultimate-auction' === $current_page && 'email' === $setting_section ) {
 
 				add_settings_section(
 					'email_section_id', // this is the unique id for the section

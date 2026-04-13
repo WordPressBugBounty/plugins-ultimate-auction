@@ -24,7 +24,8 @@ jQuery( document ).ready(
 				var data = {
 					action: 'wdm_ajax',
 					auction_id: auction_id,
-					show_rows: show_rows
+					show_rows: show_rows,
+					nonce: wdm_ua_obj_l10n1.nonce
 				};
 
 				jQuery.post(
