@@ -23,6 +23,15 @@ document.addEventListener(
 				}
 			);
 
+			document.addEventListener(
+				"keydown",
+				(e) => {
+					if (e.key === "Escape" && popupElement.style.display === "block") {
+						closePopup();
+					}
+				}
+			);
+
 			// Add these lines inside the "DOMContentLoaded" event listener
 			const prevButton = document.querySelector(".slider .prev-btn");
 			const nextButton = document.querySelector(".slider .next-btn");
@@ -136,7 +145,7 @@ document.addEventListener(
 				if (slide.type === 'image') {
 					popupContent.innerHTML = `<img src="${slide.src}" alt="Image">`;
 				} else if (slide.type === 'youtube') {
-					popupContent.innerHTML = `<a href="${slide.href}"><img src="${slide.src}" alt="Image"></a>`;
+					popupContent.innerHTML = `<a href="${slide.href}" target="_blank" rel="noopener noreferrer"><img src="${slide.src}" alt="Image"></a>`;
 				} else if (slide.type === 'video') {
 					popupContent.innerHTML = `<video src="${slide.src}" controls></video>`;
 				}
@@ -159,7 +168,7 @@ document.addEventListener(
 				if (slide.type === 'image') {
 					popupContent.innerHTML = `<img src="${slide.src}" alt="Image">`;
 				} else if (slide.type === 'youtube') {
-					popupContent.innerHTML = `<a href="${slide.href}"><img src="${slide.src}" alt="Image"></a>`;
+					popupContent.innerHTML = `<a href="${slide.href}" target="_blank" rel="noopener noreferrer"><img src="${slide.src}" alt="Image"></a>`;
 				} else if (slide.type === 'video') {
 					popupContent.innerHTML = `<video src="${slide.src}" controls></video>`;
 				}

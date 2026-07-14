@@ -134,7 +134,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					?>
 					<tr>
 						<td>
-							<?php echo esc_html( $result->name ); ?> 
+							<?php echo esc_html(wdm_ua_display_username($result->name)); ?> 
 						</td>
 						<td>
 							<?php echo esc_html( $currency_symbol ) . number_format( $result->bid, 2, '.', ',' ) . ' ' . esc_html( $currency_code_display ); ?>

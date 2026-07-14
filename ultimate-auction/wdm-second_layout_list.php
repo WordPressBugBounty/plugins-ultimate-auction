@@ -106,7 +106,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 							
 						</li>
 						<li class="prod_summary">
-							<div class="product-name"><?php echo esc_attr( $wdm_single_auction->post_title ); ?></div>
+							<div class="product-name">
+								<a href="<?php echo esc_url( get_permalink() . $set_char . 'ult_auc_id=' . $wdm_single_auction->ID ); ?>">
+									<?php echo esc_html( $wdm_single_auction->post_title ); ?>
+								</a>
+							</div>
 							<div class="product-description">
 							<?php
 							if ( $wdm_single_auction->post_excerpt ) {

@@ -163,15 +163,19 @@ div#popupContent video {
 	height: auto;
 }
 div#popupContent img {
-	width: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	width: auto;
 	height: auto;
+	object-fit: contain;
 }
 .col-left-img .close-btn {
 	cursor: pointer;
 	color: #fff;
 	font-size: 30px;
 	position: absolute;
-	top: 10px;
+	top: 40px;
+	z-index: 10000;
 	right: 20px;
 	}
 
@@ -685,4 +689,17 @@ div#wdm-buy-line-above input.wdm-login-to-buy-now {
 
 .wp-site-blocks .container-auw.alignfull {
 	margin: 0 auto!important;
+}
+
+
+div#popupContent {
+     height: 100%; padding: 40px 0;
+}
+.col-left-img .close-btn {
+    height: 40px;
+    width: 40px;
+    background: rgb(0 0 0 / 50%);
+    line-height: 40px;
+    text-align: center;
+    border-radius: 50%;
 }

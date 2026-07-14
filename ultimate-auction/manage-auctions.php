@@ -122,7 +122,7 @@ class Auctions_List_Table extends WP_List_Table {
 				foreach ( $results as $result ) {
 					// $row_bidders.="<li><strong><a href='#'>".$result->name."</a></strong> - ".$currency_code." ".$result->bid."</li>";
 
-					$row_bidders .= "<li><strong><a href='#' id='wdm_bidder_id_" . intval( $result->id ) . "' class='wdm_bidder_info wdm-margin-bottom wdm_bidder_info_" . intval( $single_auction->ID ) . "'>" . esc_html( $result->name ) . '</a></strong> - ' . esc_html( $currency_code ) . ' ' . esc_html( $result->bid );
+					$row_bidders .= "<li><strong><a href='#' id='wdm_bidder_id_" . intval( $result->id ) . "' class='wdm_bidder_info wdm-margin-bottom wdm_bidder_info_" . intval( $single_auction->ID ) . "'>" . esc_html( wdm_ua_display_username($result->name) ) . '</a></strong> - ' . esc_html( $currency_code ) . ' ' . esc_html( $result->bid );
 					if ( ! empty( $result ) ) {
 
 						$row_bidders .= "<div class='wdm-margin-bottom wdm_bidder_id_" . intval( $result->id ) . "' style='display:none;'>";
@@ -234,7 +234,7 @@ class Auctions_List_Table extends WP_List_Table {
 					} else {
 
 						/* translators: %s is winner name */
-						$row['email_payment'] .= "<div class='wdm-auction-bought'>" . sprintf( __( 'Bought by %s', 'wdm-ultimate-auction' ), apply_filters( 'ua_list_winner_info', $buyer->user_login, $buyer, $single_auction->ID, 'e' ) ) . "</div><div class='wdm-margin-bottom wdm-mark-green'>" . __( 'Price', 'wdm-ultimate-auction' ) . '[' . $currency_code . ' ' . $buy_it_now_price . ']</div>';
+						$row['email_payment'] .= "<div class='wdm-auction-bought'>" . sprintf( __( 'Bought by %s', 'wdm-ultimate-auction' ), apply_filters( 'ua_list_winner_info', wdm_ua_display_username($buyer->user_login), $buyer, $single_auction->ID, 'e' ) ) . "</div><div class='wdm-margin-bottom wdm-mark-green'>" . __( 'Price', 'wdm-ultimate-auction' ) . '[' . $currency_code . ' ' . $buy_it_now_price . ']</div>';
 					}
 				} elseif ( ! empty( $results ) ) {
 						$reserve_price_met = get_post_meta( $single_auction->ID, 'wdm_lowest_bid', true );
@@ -268,8 +268,8 @@ class Auctions_List_Table extends WP_List_Table {
 
 						$f_winner_name = "";
 						
-						if(isset($winner->user_login)) {
-							$f_winner_name = $winner->user_login;
+						if (isset($winner->user_login)) {
+							$f_winner_name = wdm_ua_display_username($winner->user_login);
 
 							if ( empty( $f_winner_name ) ) {
 								$f_winner_name = $winner_name;

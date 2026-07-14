@@ -40,6 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 					<?php
 						$vid_arr   = array( 'mpg', 'mpeg', 'avi', 'mov', 'wmv', 'wma', 'mp4', '3gp', 'ogm', 'mkv', 'flv' );
+						$img_arr   = array( 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'ico', 'webp' );
 						$auc_thumb = get_post_meta( $wdm_single_auction->ID, 'wdm_auction_thumb', true );
 						$imgMime = wdm_get_mime_type( $auc_thumb );
 						$img_ext = explode( '.', $auc_thumb );
@@ -73,10 +74,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 							$auc_thumb = plugins_url( 'img/video-banner.png', __FILE__ );
 						} elseif ( ( ! is_null( $imgMime ) && strstr( $imgMime, 'video/' ) ) || in_array( $img_ext, $vid_arr ) ) {
 							$auc_thumb = plugins_url( 'img/video-banner.png', __FILE__ );
-						} elseif ( ! is_null( $imgMime ) && strstr( $imgMime, 'image/' ) ) {
-							$imgid     = attachment_url_to_postid( $auc_thumb );
-							$Image_URL = wp_get_attachment_image_url( $imgid, 'thumbnail' );
-							$auc_thumb = $Image_URL;
+						} elseif ( ( ! is_null( $imgMime ) && strstr( $imgMime, 'image/' ) ) || in_array( $img_ext, $img_arr ) ) {
+							$imgid = attachment_url_to_postid( $auc_thumb );
+							if ( ! empty( $imgid ) ) {
+								$auc_thumb = wp_get_attachment_image_url( $imgid, 'thumbnail' );
+							}
+							// else: keep the raw $auc_thumb URL (e.g. externally hosted image)
 						} elseif ( empty( $auc_thumb ) ) {
 							$auc_thumb = plugins_url( 'img/no-pic.jpg', __FILE__ );
 						} else {
@@ -86,7 +89,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<img src="<?php echo esc_url( $auc_thumb ); ?>" alt="<?php echo esc_attr( $wdm_single_auction->post_title ); ?>" />
 				</li>
 				<li class="prod_summary">
-					<div class="product-name"><?php echo esc_attr( $wdm_single_auction->post_title ); ?></div>
+					<div class="product-name">
+						<a href="<?php echo esc_url( get_permalink() . $set_char . 'ult_auc_id=' . $wdm_single_auction->ID ); ?>">
+							<?php echo esc_html( $wdm_single_auction->post_title ); ?>
+						</a>
+					</div>
 					<div class="product-description">
 						<?php
 						if ( $wdm_single_auction->post_excerpt ) {
@@ -149,7 +156,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				esc_html( $count_pages ) . '" />';
 
 			$c = ceil( $count_pages / $page_num );
-			auction_pagination( $c, 1, $paged );
+			auction_pagination_ctm( $c, 1, $paged );
 		}
 		?>
 	</div>

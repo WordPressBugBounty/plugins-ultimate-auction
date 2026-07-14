@@ -124,7 +124,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				?>
 				<ul class="wdm-recent-bidders clearfix">
 					<li class="wdmua-recent-bidders-list wdmua-recent-bidders-list-first">
-						<?php echo esc_html( $result->name ); ?> 
+						<?php echo esc_html( wdm_ua_display_username($result->name) ); ?> 
 					</li>
 					<li class="wdmua-recent-bidders-list">
 						<?php echo esc_html( $currency_symbol ) . number_format( $result->bid, 2, '.', ',' ) . ' ' . esc_html( $currency_code_display ); ?>

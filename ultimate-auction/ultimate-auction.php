@@ -1,12 +1,12 @@
 <?php
 
 /*
-	Plugin Name: Ultimate WordPress Auction Plugin
+	Plugin Name: Ultimate WordPress Auction Plugin 	
 	Plugin URI: https://auctionplugin.net
 	Description: Awesome plugin to host auctions on your WordPress site and sell anything you want.
 	Author: Nitesh Singh
 	Author URI: https://auctionplugin.net
-	Version: 4.3.3
+	Version: 4.3.4
 	Text Domain: wdm-ultimate-auction
 	License: GPLv2
 	Copyright 2026 Nitesh Singh
@@ -456,7 +456,7 @@ function cancel_last_bid_callback() {
 
 	if ( $cancel_bid ) {
 		/* translators: %s is bidder name */
-		printf( esc_html__( 'Bid entry of %s was removed successfully.', 'wdm-ultimate-auction' ), esc_html( $bidder_name ) );
+		printf( esc_html__( 'Bid entry of %s was removed successfully.', 'wdm-ultimate-auction' ), esc_html( wdm_ua_display_username($bidder_name) ) );
 	} else {
 		esc_html_e( 'Sorry, bid entry cannot be removed.', 'wdm-ultimate-auction' );
 	}
@@ -886,7 +886,7 @@ function wdm_set_auction_timezone() {
 			if ( is_user_logged_in() ) {
 				$curr_user   = wp_get_current_user();
 				$buyer_email = $curr_user->user_email;
-				$winner_name = $curr_user->user_login;
+				$winner_name = $curr_user->user_login; // don't change here..
 			}
 
 											$auction_email = get_option( 'wdm_auction_email' );
@@ -1025,7 +1025,7 @@ function wdm_list_winner_info( $info, $winner, $id, $col ) {
 
 	if ( ! empty( $winner ) ) {
 
-		$info  = "<a href='#' class='wdm_winner_info wdm-margin-bottom' id='wdm_winner_info_" . $col . '_' . $id . "'>" . $winner->user_login . '</a>';
+		$info  = "<a href='#' class='wdm_winner_info wdm-margin-bottom' id='wdm_winner_info_" . $col . '_' . $id . "'>" . wdm_ua_display_username($winner->user_login) . '</a>';
 		$info .= "<div class='wdm-margin-bottom wdm_winner_info_" . $col . '_' . $id . "' style='display:none;'><div>";
 		$info .= ! empty( $winner->first_name ) ? $winner->first_name : '';
 		$info .= ! empty( $winner->last_name ) ? ' ' . $winner->last_name : '';
@@ -1033,6 +1033,28 @@ function wdm_list_winner_info( $info, $winner, $id, $col ) {
 	}
 
 	return $info;
+}
+
+/**
+ * Format a username for front-end display.
+ *
+ * If the user_login is (or contains) an email address, only the part
+ * before the "@" is shown on front-end pages. The "@" and everything
+ * after it is removed. Non-email usernames are returned unchanged.
+ *
+ * @param string $username The raw username (e.g. user_login).
+ * @return string The username trimmed at the "@" for front-end display.
+ */
+function wdm_ua_display_username( $username ) {
+
+	$username = (string) $username;
+
+	if ( is_email( $username ) ) {
+		$at_pos   = strpos( $username, '@' );
+		$username = substr( $username, 0, $at_pos );
+	}
+
+	return $username;
 }
 
 /*
@@ -1142,12 +1164,16 @@ function wdm_uwa_pro_add_plugins_notice() {
 					
 					<?php
 
-					$nonce_field = wp_nonce_field( 'ua_notice_wp_n_f', 'ua_wdm_ignore_notice' );
-					echo wp_kses_post( $nonce_field );
+					/* The dismiss link is a GET request, so the nonce must travel in the URL. */
+					$dismiss_url = wp_nonce_url(
+						add_query_arg( 'wdm_uwa_pro_ignore', '0' ),
+						'ua_notice_wp_n_f',
+						'ua_wdm_ignore_notice'
+					);
 
 					/* translators: %1$s is querystring, %2$s is image URL */
 					echo wp_kses( sprintf( __( '<a href="%1$s"><img src="%2$s" /></a>', 'ultimate-woocommerce-auction' ),
-							esc_url( '?wdm_uwa_pro_ignore=0' ),
+							esc_url( $dismiss_url ),
 							esc_url( plugins_url( '/img/error.png', __FILE__ ) )
 						),
 						array(
@@ -1175,12 +1201,10 @@ function wdm_uwa_pro_ignore() {
 	global $current_user;
 		$user_id = $current_user->ID;
 		/* If user clicks to ignore the notice, add that to their user meta */
-	if ( isset( $_POST['ua_wdm_ignore_notice'] ) && wp_verify_nonce(
-				$_POST['ua_wdm_ignore_notice'], 'ua_notice_wp_n_f') ) {
-
-		if ( isset( $_GET['wdm_uwa_pro_ignore'] ) && '0' == $_GET['wdm_uwa_pro_ignore'] ) {
-			add_user_meta( $user_id, 'wdm_uwa_pro_ignore_notice', 'true', true );
-		}
+	if ( isset( $_GET['wdm_uwa_pro_ignore'] ) && '0' == $_GET['wdm_uwa_pro_ignore']
+		&& isset( $_GET['ua_wdm_ignore_notice'] )
+		&& wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['ua_wdm_ignore_notice'] ) ), 'ua_notice_wp_n_f' ) ) {
+		add_user_meta( $user_id, 'wdm_uwa_pro_ignore_notice', 'true', true );
 	}
 }
 add_action( 'admin_init', 'wdm_uwa_pro_ignore' );
@@ -1199,10 +1223,14 @@ function wdm_uwa_plugin_layout_notice() {
 	$user_id = $current_user->ID;
 	if ( ! get_user_meta( $user_id, 'wdm_uwa_plugin_layout_ignore_notice' ) ) {
 
-		$nonce_field = wp_nonce_field( 'ua_layout_wp_n_f', 'ua_wdm_ignore_layout' );
-		echo wp_kses_post( $nonce_field );
+		/* The dismiss link is a GET request, so the nonce must travel in the URL. */
+		$dismiss_url = wp_nonce_url(
+			add_query_arg( 'wdm_uwa_plugin_layout_ignore', '0' ),
+			'ua_layout_wp_n_f',
+			'ua_wdm_ignore_layout'
+		);
 
-		/* translators: %2$s is bloginfo URL */
+		/* translators: %2$s is the dismiss URL */
 
 		echo '<div class="notice"><p>' . sprintf( wp_kses( __( '<b>Ultimate WordPress Auction Plugin:</b> Important Message - We have implemented a new layout for the auction list page and auction detail page. The new layout appears by default on both pages. We have given the option to change the layout for auction pages. So, the admin can set the old layout or new layout from the auction settings. <a href="%2$s">Hide Notice</a>', 'woo_ua' ),
 				array(
@@ -1213,7 +1241,7 @@ function wdm_uwa_plugin_layout_notice() {
 				)
 			),
 			esc_html( get_bloginfo( 'url' ) ),
-			esc_url( add_query_arg( 'wdm_uwa_plugin_layout_ignore', '0' ) )
+			esc_url( $dismiss_url )
 		) . '</p></div>';
 
 	}
@@ -1225,12 +1253,10 @@ function wdm_uwa_plugin_layout_ignore() {
 	global $current_user;
 	$user_id = $current_user->ID;
 
-	if ( isset( $_POST['ua_wdm_ignore_layout'] ) && wp_verify_nonce(
-				$_POST['ua_wdm_ignore_layout'], 'ua_layout_wp_n_f') ) {	
-
-		if ( isset( $_GET['wdm_uwa_plugin_layout_ignore'] ) && '0' == $_GET['wdm_uwa_plugin_layout_ignore'] ) {
-			add_user_meta( $user_id, 'wdm_uwa_plugin_layout_ignore_notice', 'true', true );
-		}
+	if ( isset( $_GET['wdm_uwa_plugin_layout_ignore'] ) && '0' == $_GET['wdm_uwa_plugin_layout_ignore']
+		&& isset( $_GET['ua_wdm_ignore_layout'] )
+		&& wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['ua_wdm_ignore_layout'] ) ), 'ua_layout_wp_n_f' ) ) {
+		add_user_meta( $user_id, 'wdm_uwa_plugin_layout_ignore_notice', 'true', true );
 	}
 }
 

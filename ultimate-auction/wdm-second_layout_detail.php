@@ -307,7 +307,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="wdm-mark-red">
 							<?php esc_html_e( 'This auction has been bought by', 'wdm-ultimate-auction' ); ?>
 							<?php
-							echo esc_html( $buyer->user_login ) . ' [' .
+							echo esc_html( wdm_ua_display_username($buyer->user_login) ) . ' [' .
 								esc_html( $currency_symbol ) .
 								number_format( $buy_now_price, 2, '.', ',' ) . ' ' .
 								esc_html( $currency_code_display ) .
@@ -352,7 +352,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 								/* translators: %1$s is winner name , %2$ is winning price */
 								printf( '<div class="wdm-mark-red">' . esc_html__( 'This auction has been sold to %1$s at %2$s.', 'wdm-ultimate-auction' ) . '</div>',
-									esc_html( $winner_name ),
+									esc_html( wdm_ua_display_username( $winner_name ) ),
 									esc_html( $currency_symbol ) . number_format( $win_bid, 2, '.', ',' ) . ' ' . esc_html( $currency_code_display )
 								);
 
@@ -769,7 +769,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 								/* translators: %1$s is currency code, %2$.2f is buynow price, %3$s is payment method, %4$s is auction author login */
 
-								$wdm_buynow_cfrm_txt = sprintf(__( 'You need to pay %1$s %2$.2f amount via %3$s to %4$s. If you choose OK, you will receive an email with payment details and auction will expire. Choose Cancel to ignore this buy now transaction.', 'wdm-ultimate-auction' ), esc_html( $currency_code ), esc_html( $buy_now_price + $shipAmt ), esc_html( $mthd ), esc_html( $auction_author->user_login ) );
+								$wdm_buynow_cfrm_txt = sprintf(__( 'You need to pay %1$s %2$.2f amount via %3$s to %4$s. If you choose OK, you will receive an email with payment details and auction will expire. Choose Cancel to ignore this buy now transaction.', 'wdm-ultimate-auction' ), esc_html( $currency_code ), esc_html( $buy_now_price + $shipAmt ), esc_html( $mthd ), esc_html( wdm_ua_display_username($auction_author->user_login )) );
 
 								?>
 

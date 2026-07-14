@@ -3,8 +3,8 @@ Contributors: nitesh_singh
 Donate link: http://auctionplugin.net/
 Tags: auction, auction plugin, wordpress auction, ebay auction, bidding
 Requires at least: 4.6
-Tested up to: 6.9.4
-Stable tag: 4.3.3
+Tested up to: 7.0.1
+Stable tag: 4.3.4
 License: GPLv2 or later
 
 Ultimate Wordpress Auction plugin is the best plugin to host auctions on your wordpress site.
@@ -350,6 +350,27 @@ For example:
 == Frequently Asked Questions ==
 
 == Changelog ==
+
+= 4.3.4 =
+
+1. Fix:
+
+	There was an issue with the pagination in the Expired Auctions listing for the second layout, it has been fixed.
+
+	When the payment method was set to "Cash" for an auction, the cash payment details were not displayed in the winner email. This issue has been resolved.
+
+	The images were not displaying on the Expired Auctions listing page in the second layout. This issue has been fixed.
+
+	There was an issue with the image display and the close button in the popup on the Auction Detail page in the second layout. This issue has been resolved.
+
+2. Improvement:
+	
+	The PRO plugin notices displayed on the admin dashboard can now be permanently dismissed by clicking the **Hide Notice** link.
+
+	The product titles on the Auction Listing page in the second layout are now linked to their respective Auction Detail pages, allowing users to navigate to the detail page more easily.
+
+	When an email address is used as the username, only the portion before the "@" symbol will be displayed instead of the full email address. This change applies throughout the plugin, including the Auction Detail page, Bid History, Emails, Manage Auctions listing, and other relevant areas.
+
 
 = 4.3.3 =
 

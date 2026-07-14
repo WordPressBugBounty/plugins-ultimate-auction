@@ -141,7 +141,7 @@ if ( ! class_exists( 'wdm_settings' ) ) {
 				foreach ( $results as $result ) {
 					?>
 				<li><strong><a href='#'>
-							<?php echo esc_html( $result->name ); ?></a></strong> -
+							<?php echo esc_html( wdm_ua_display_username($result->name) ); ?></a></strong> -
 					<?php echo esc_html( $currency_code ) . ' ' . esc_html( $result->bid ); ?>
 				</li>
 					<?php

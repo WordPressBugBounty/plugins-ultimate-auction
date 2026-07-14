@@ -42,7 +42,7 @@ function ultimate_auction_email_template(
 	$auction_email = get_option( 'wdm_auction_email' );
 	$site_url      = get_bloginfo( 'url' );
 
-	$message  = __( 'Hi', 'wdm-ultimate-auction' ) . ' ' . esc_html( $winner_name ) . ', <br /><br />';
+	$message  = __( 'Hi', 'wdm-ultimate-auction' ) . ' ' . esc_html( wdm_ua_display_username($winner_name) ) . ', <br /><br />';
 
 	/* translators: %s is website URL */
 	$message .= sprintf( __( 'This is to inform you that you have won the auction at WEBSITE URL %s. Here are the auction details', 'wdm-ultimate-auction' ), esc_url( $site_url ) ) . ': <br /><br />';
@@ -148,7 +148,7 @@ function ultimate_auction_email_template(
 			$message .= sprintf( __( 'You can pay %s by Cash.', 'wdm-ultimate-auction' ), $pay_amt ) . '<br /><br />';
 		}
 
-		$cash_msg = get_option( 'wdm_mailing_address' );
+		$cash_msg = get_option( 'wdm_cash' );
 
 		if ( ! empty( $cash_msg ) ) {
 			$message .= __( 'Cash Details', 'wdm-ultimate-auction' ) . ': <br />';
@@ -163,7 +163,9 @@ function ultimate_auction_email_template(
 
 	$email_sent = false;
 
-	if ( ! empty( $paypal_link ) ) {
+	// Send the winner email whenever we have a valid recipient, regardless of
+	// payment method (Cash / Wire / Mailing auctions must send too, not only PayPal).
+	if ( ! empty( $winner_email ) && is_email( $winner_email ) ) {
 		$headers = '';
 		// $headers  = "From: ". get_bloginfo('name') ." <". $seller_email ."> \r\n";
 		$headers   .= 'Reply-To: <' . $auction_email . "> \r\n";
@@ -212,7 +214,8 @@ function wdm_ua_seller_notification_mail( $email, $bid, $ret_url, $auc_name, $au
 	$adm_sub  = '[' . get_bloginfo( 'name' ) . ']  ' . __( 'A bidder has placed a bid on the product', 'wdm-ultimate-auction' ) . ' - ' . $auc_name;
 	$adm_msg  = '';
 	$adm_msg  = '<strong> ' . __( 'Bidder Details', 'wdm-ultimate-auction' ) . ' - </strong>';
-	$adm_msg .= '<br /><br /> ' . __( 'Bidder Name', 'wdm-ultimate-auction' ) . ': ' . esc_html( $mod_name );
+	$adm_msg .= '<br /><br /> ' . __( 'Bidder Name', 'wdm-ultimate-auction' ) . ': ' . esc_html( wdm_ua_display_username(
+		$mod_name));
 	$adm_msg .= '<br /><br /> ' . __( 'Bidder Email', 'wdm-ultimate-auction' ) . ': ' . esc_html( $mod_email );
 	$adm_msg .= '<br /><br /> ' . __( 'Bid Value', 'wdm-ultimate-auction' ) . ': ' . esc_html( $c_code ) . ' ' . sprintf( '%.2f', (float) $bid );
 	$adm_msg .= '<br /><br /><strong>' . __( 'Product Details', 'wdm-ultimate-auction' ) . ' - </strong>';
