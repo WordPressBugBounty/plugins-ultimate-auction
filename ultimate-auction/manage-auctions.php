@@ -508,6 +508,17 @@ $manage_auction_tab = ( isset( $_GET['auction_type'] ) && 'expired' === $_GET['a
 	<input type="button" id="wdm_mult_chk_del" class="wdm_ua_act_links button-secondary" value="<?php esc_attr_e( 'Apply', 'wdm-ultimate-auction' ); ?>" />
 	<span class="wdmua_del_stats"></span>
 </div>
+<!--export auctions as CSV for Ultimate WooCommerce Auction Pro importer-->
+<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="float:right;">
+	<input type="hidden" name="action" value="uwa_export_pro_csv" />
+	<?php wp_nonce_field( 'wdm_export_pro_csv', 'wdm_export_nonce' ); ?>
+	<select name="export_type" style="margin-right: 10px;">
+		<option value="all"><?php esc_html_e( 'All Auctions', 'wdm-ultimate-auction' ); ?></option>
+		<option value="live"><?php esc_html_e( 'Live Auctions', 'wdm-ultimate-auction' ); ?></option>
+		<option value="expired"><?php esc_html_e( 'Expired Auctions', 'wdm-ultimate-auction' ); ?></option>
+	</select>
+	<input type="submit" class="button-secondary" value="<?php esc_attr_e( 'Export CSV', 'wdm-ultimate-auction' ); ?>" />
+</form>
 <?php
 $myListTable = new Auctions_List_Table();
 $myListTable->prepare_items();

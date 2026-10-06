@@ -3618,3 +3618,19 @@ msgstr ""
 #: /home/praveen/UA/ultimate-auction-pro/ua-proxy-bidding/ua-proxy-bidding.php:249
 msgid "NOTE: This applies only to Simple Bidding Engine"
 msgstr "Nota: Isto apenas se aplica ao motor de leilões"
+
+#: ultimate-auction/manage-auctions.php:520
+msgid "Export CSV"
+msgstr "Exportar CSV"
+
+#: ultimate-auction/manage-auctions.php:516
+msgid "All Auctions"
+msgstr "Todos os leilões"
+
+#: ultimate-auction/export-csv.php:27
+msgid "Permission denied"
+msgstr "Permissão negada"
+
+#: ultimate-auction/export-csv.php:31
+msgid "Nonce verification failed"
+msgstr "A verificação do nonce falhou"

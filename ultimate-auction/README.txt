@@ -1,10 +1,10 @@
-=== Ultimate Wordpress Auction Plugin ===
+=== Ultimate Wordpress Auction ===
 Contributors: nitesh_singh
 Donate link: http://auctionplugin.net/
 Tags: auction, auction plugin, wordpress auction, ebay auction, bidding
 Requires at least: 4.6
-Tested up to: 7.0.1
-Stable tag: 4.3.4
+Tested up to: 7.1.2
+Stable tag: 4.3.5
 License: GPLv2 or later
 
 Ultimate Wordpress Auction plugin is the best plugin to host auctions on your wordpress site.
@@ -351,13 +351,22 @@ For example:
 
 == Changelog ==
 
+= 4.3.5 =
+
+1. New Feature:
+
+	Added "Export CSV" option on the Manage Auctions page. Admin can export All, Live or Expired auctions as a CSV file that can be imported into Ultimate WooCommerce Auction Pro using WooCommerce > Products > Import.
+
+	The export includes title, description, short description, images, opening price, lowest price to accept, bid increment, buy now price, start date and end date. Bids and winner details are not exported.
+	
+
 = 4.3.4 =
 
 1. Fix:
 
 	There was an issue with the pagination in the Expired Auctions listing for the second layout, it has been fixed.
 
-	When the payment method was set to "Cash" for an auction, the cash payment details were not displayed in the winner email. This issue has been resolved.
+	When the payment method was set to "Cash" for an auction, the cash payment details were not included in the winner email. This issue has been resolved.
 
 	The images were not displaying on the Expired Auctions listing page in the second layout. This issue has been fixed.
 

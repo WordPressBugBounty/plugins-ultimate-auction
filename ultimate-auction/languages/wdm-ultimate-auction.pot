@@ -1429,3 +1429,19 @@ msgstr ""
 #: ultimate-auction/wdm-second_layout_detail.php:263
 msgid "Current Bid : %s"
 msgstr ""
+
+#: ultimate-auction/manage-auctions.php:520
+msgid "Export CSV"
+msgstr ""
+
+#: ultimate-auction/manage-auctions.php:516
+msgid "All Auctions"
+msgstr ""
+
+#: ultimate-auction/export-csv.php:27
+msgid "Permission denied"
+msgstr ""
+
+#: ultimate-auction/export-csv.php:31
+msgid "Nonce verification failed"
+msgstr ""

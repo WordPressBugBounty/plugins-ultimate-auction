@@ -184,7 +184,7 @@ td.ID.column-ID,th.manage-column.column-ID {width:50px;}
 
 .ua_auction_price_fields{ width : 100px !important; }
 
-.wrap h2 { font-size: 28px !important;  font-weight: 400 !important; margin: 0 !important; padding: 9px 0 4px 0 !important; line-height: 1.3 !important;}
+#wdm_auction_setID h2, #sec_why_upgradeID h2 { font-size: 28px !important;  font-weight: 400 !important; margin: 0 !important; padding: 9px 0 4px 0 !important; line-height: 1.3 !important;}
 .get_uwa_pro {
 	box-sizing: border-box;
 	display: flex;

@@ -1347,3 +1347,19 @@ msgstr "Va rugam sa introduceti adresa de e-mail"
 #: /home/praveen/UA/ultimate-auction/ajax-actions/send-private-msg.php:25
 msgid "Please enter a message"
 msgstr "Va rugam sa introduceti mesajul"
+
+#: ultimate-auction/manage-auctions.php:520
+msgid "Export CSV"
+msgstr "Exportă CSV"
+
+#: ultimate-auction/manage-auctions.php:516
+msgid "All Auctions"
+msgstr "Toate licitaţiile"
+
+#: ultimate-auction/export-csv.php:27
+msgid "Permission denied"
+msgstr "Permisiune refuzată"
+
+#: ultimate-auction/export-csv.php:31
+msgid "Nonce verification failed"
+msgstr "Verificarea nonce a eşuat"

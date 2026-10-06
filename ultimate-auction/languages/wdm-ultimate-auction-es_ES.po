@@ -5384,3 +5384,19 @@ msgstr ""
 #: /home/sonali/uapro_pot_file/ultimate-auction-pro/ua-proxy-bidding/ua-proxy-bidding.php:252
 msgid "NOTE: This applies only to Simple Bidding Engine"
 msgstr "NOTA: Esto sólo se aplica a las Pujas Simples"
+
+#: ultimate-auction/manage-auctions.php:520
+msgid "Export CSV"
+msgstr "Exportar CSV"
+
+#: ultimate-auction/manage-auctions.php:516
+msgid "All Auctions"
+msgstr "Todas las subastas"
+
+#: ultimate-auction/export-csv.php:27
+msgid "Permission denied"
+msgstr "Permiso denegado"
+
+#: ultimate-auction/export-csv.php:31
+msgid "Nonce verification failed"
+msgstr "La verificación del nonce ha fallado"

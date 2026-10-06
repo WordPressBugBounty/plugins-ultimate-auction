@@ -364,7 +364,7 @@ if ( ! class_exists( 'wdm_settings' ) ) {
 
 			// enqueue css file for admin section style
 			wp_enqueue_style( 'ult_auc_be_css', plugins_url( '/css/ua-back-end.css', __FILE__ ), 
-				array(), "1.0" );
+				array(), "4.3.5" );
 
 			register_setting(
 				'test_option_group',

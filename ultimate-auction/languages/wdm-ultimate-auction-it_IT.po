@@ -3555,3 +3555,19 @@ msgstr "Il prezzo minimo / di riserva deve essere maggiore o uguale al prezzo di
 #: D:\htdocs\Aste smartphone\wp-content\plugins\ultimate-auction-pro-developer/validate-auctions.php:187
 msgid "Buy Now price should be more than or equal to Lowest/Reserve price."
 msgstr "Il prezzo compralo subito deve essere maggiore o uguale del prezzo minimo/di riserva"
+
+#: ultimate-auction/manage-auctions.php:520
+msgid "Export CSV"
+msgstr "Esporta CSV"
+
+#: ultimate-auction/manage-auctions.php:516
+msgid "All Auctions"
+msgstr "Tutte le aste"
+
+#: ultimate-auction/export-csv.php:27
+msgid "Permission denied"
+msgstr "Permesso negato"
+
+#: ultimate-auction/export-csv.php:31
+msgid "Nonce verification failed"
+msgstr "Verifica del nonce non riuscita"

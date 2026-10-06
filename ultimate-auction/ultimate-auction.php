@@ -1,12 +1,12 @@
 <?php
 
 /*
-	Plugin Name: Ultimate WordPress Auction Plugin 	
+	Plugin Name: Ultimate WordPress Auction
 	Plugin URI: https://auctionplugin.net
 	Description: Awesome plugin to host auctions on your WordPress site and sell anything you want.
 	Author: Nitesh Singh
 	Author URI: https://auctionplugin.net
-	Version: 4.3.4
+	Version: 4.3.5
 	Text Domain: wdm-ultimate-auction
 	License: GPLv2
 	Copyright 2026 Nitesh Singh
@@ -21,6 +21,7 @@ load_plugin_textdomain( 'wdm-ultimate-auction', false, dirname( plugin_basename(
 require_once 'settings-page.php';
 require_once 'auction-shortcode.php';
 require_once 'send-auction-email.php';
+require_once 'export-csv.php';
 
 // create a table for auction bidders on plugin activation
 register_activation_hook( __FILE__, 'wdm_create_bidders_table' );

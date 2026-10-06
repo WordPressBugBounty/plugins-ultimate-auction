@@ -2645,3 +2645,19 @@ msgid "Buy Now price should be more than or equal to Lowest/Reserve price."
 msgstr ""
 "Nu kopen-prijs moet meer zijn dan of gelijk zijn aan kleinste/"
 "minimumverkoopprijs."
+
+#: ultimate-auction/manage-auctions.php:520
+msgid "Export CSV"
+msgstr "CSV exporteren"
+
+#: ultimate-auction/manage-auctions.php:516
+msgid "All Auctions"
+msgstr "Alle veilingen"
+
+#: ultimate-auction/export-csv.php:27
+msgid "Permission denied"
+msgstr "Toegang geweigerd"
+
+#: ultimate-auction/export-csv.php:31
+msgid "Nonce verification failed"
+msgstr "Nonce-verificatie mislukt"

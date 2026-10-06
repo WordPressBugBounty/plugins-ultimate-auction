@@ -2696,3 +2696,19 @@ msgstr "Telefonnummer"
 #: /home/praveen/UA/ultimate-auction-pro/ua-shipping-cost/ua-shipping-cost.php:797
 msgid "Shipping Info"
 msgstr "Leveringsinfo"
+
+#: ultimate-auction/manage-auctions.php:520
+msgid "Export CSV"
+msgstr "Eksportér CSV"
+
+#: ultimate-auction/manage-auctions.php:516
+msgid "All Auctions"
+msgstr "Alle auktioner"
+
+#: ultimate-auction/export-csv.php:27
+msgid "Permission denied"
+msgstr "Adgang nægtet"
+
+#: ultimate-auction/export-csv.php:31
+msgid "Nonce verification failed"
+msgstr "Nonce-verifikation mislykkedes"
